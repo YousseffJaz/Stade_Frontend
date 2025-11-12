@@ -1,0 +1,37 @@
+<div class="container">
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <table class="table table-striped">
+                @if (stades.length!=0) {
+                    <thead>
+                        <tr> <th>N°</th><th>Nom</th> <th>Prix</th> <th>Date Création</th> <th>Pays</th> </tr>
+                    </thead>
+                }
+                @for (stade of stades; track stade.idStade ; let index=$index ; let nbr=$count; let first=$first; let last=$last) {
+                   
+                    <tbody >
+                        <tr >
+                            <td>{{index + 1}}</td>
+                            <td>{{stade.nomStade}}</td>
+                            <td>{{stade.prixStade}}</td>
+                            <td>{{stade.dateCreation | date:'dd/MM/yyyy'}}</td>
+                            <td>{{stade.pays?.nomPay}}</td>
+                            @if(auth.isAdmin()) {
+
+                            <td><a class="btn btn-danger" (click)="supprimerStade(stade)">Supprimer</a></td>
+                            <td><a class="btn btn-success" [routerLink]="['/updateStade',stade.idStade]">Modifier</a></td>
+                            }
+                        </tr>
+                    </tbody>
+                     @if(last) {
+                        <h1>Nombre : {{nbr}}</h1>
+                    }
+                }
+                @empty {
+                    <h1>Aucun stade trouvé !</h1>
+                }
+
+            </table>
+        </div>
+    </div>
+</div>
