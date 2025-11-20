@@ -15,14 +15,9 @@ export class App implements OnInit {
   onLogout() {
     this.auth.logout();
   }
-  ngOnInit () {
-let isloggedin: string;
-let loggedUser:string;
-isloggedin = localStorage.getItem('isloggedIn') !;
-loggedUser = localStorage.getItem('loggedUser') !;
-if (isloggedin!="true" || !loggedUser)
-this.router.navigate(['/login']);
-else
-this.auth.setLoggedUserFromLocalStorage(loggedUser);
-}
+  ngOnInit() {
+    this.auth.loadToken();
+    if (this.auth.getToken() == null || this.auth.isTokenExpired())
+        this.router.navigate(['/login']);
+  }
 }

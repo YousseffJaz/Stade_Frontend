@@ -6,6 +6,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { PaysWrapper } from '../model/PaysWrapped.model';
 import { apiURL } from '../config';
+import { Auth } from './auth';
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
@@ -14,13 +15,14 @@ const httpOptions = {
 })
 export class StadeService {
   apiURLPays: string = 'http://localhost:8080/stades/pays';
+  apiURL: string = 'http://localhost:8080/stades/api';
   stades!: Stade[]; //un tableau de Stade 
   stade!: Stade;
   pays!: Pays[];
 
   // pays : Pays[];
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private auth: Auth) {
     // this.pays = [
     //   { idPay : 1,  nomPay : "France"},
     //   { idPay : 2,  nomPay : "Espagne"},
@@ -43,46 +45,43 @@ export class StadeService {
   }
 
   listeStades(): Observable<Stade[]> {
-    return this.http.get<Stade[]>(apiURL);
+   return this.http.get<Stade[]>(apiURL+"/all");
   }
 
+ ajouterStade(stade: Stade): Observable<Stade> {
+  return this.http.post<Stade>(this.apiURL + "/addstade", stade);
+}
 
-  ajouterStade(stade: Stade): Observable<Stade> {
-    return this.http.post<Stade>(apiURL, stade, httpOptions);
-  }
+supprimerStade(id: number) {
+  const url = `${this.apiURL}/delstade/${id}`;
+  return this.http.delete(url);
+}
 
-  supprimerStade(id: number) {
-    const url = `${apiURL}/${id}`;
-    return this.http.delete(url, httpOptions);
+consulterStade(id: number): Observable<Stade> {
+  const url = `${this.apiURL}/getbyid/${id}`;
+  return this.http.get<Stade>(url);
+}
 
-  }
-  consulterStade(id: number): Observable<Stade> {
-    const url = `${apiURL}/${id}`;
-    return this.http.get<Stade>(url);
-  }
-  //chercher le produit prod du tableau produits
-  updateStade(stade: Stade): Observable<Stade> {
-    return this.http.put<Stade>(apiURL, stade, httpOptions);
-  }
-  listePays(): Observable<PaysWrapper> {
-    return this.http.get<PaysWrapper>(this.apiURLPays);
-  }
-  /*consulterPays(id: number): Pays {
-      return this.pays.find((pay) => pay.idPay == id)!;
+updateStade(stade: Stade): Observable<Stade> {
+  return this.http.put<Stade>(this.apiURL + "/updatestade", stade);
+}
 
-  }*/
-  rechercherParPays(idPay: number): Observable<Stade[]> {
-    const url = `${apiURL}/stadepay/${idPay}`;
-    return this.http.get<Stade[]>(url);
-  }
+listePays(): Observable<PaysWrapper> {
+  return this.http.get<PaysWrapper>(this.apiURLPays);
+}
 
-  rechercherParNom(nom: string): Observable<Stade[]> {
-    const url = `${apiURL}/stadeByName/${nom}`;
-    return this.http.get<Stade[]>(url);
-  }
+rechercherParPays(idPay: number): Observable<Stade[]> {
+  const url = `${this.apiURL}/stadespay/${idPay}`;
+  return this.http.get<Stade[]>(url);
+}
 
-  ajouterPays(pays: Pays): Observable<Pays> {
-    return this.http.post<Pays>(this.apiURLPays, pays, httpOptions);
-  }
+rechercherParNom(nom: string): Observable<Stade[]> {
+  const url = `${this.apiURL}/stadesByName/${nom}`;
+  return this.http.get<Stade[]>(url);
+}
+
+ajouterPays(pay: Pays): Observable<Pays> {
+  return this.http.post<Pays>(this.apiURLPays, pay);
+}
 }
 export { Stade };
